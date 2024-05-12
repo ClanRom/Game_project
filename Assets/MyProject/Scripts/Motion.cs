@@ -6,32 +6,33 @@ public class Motion : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private float _speed;
 
-    private Vector3 _input;
     private Camera _camera;
 
-    void Start()
-    {
-        _camera = Camera.main;
-    }
+    private void Start() => _camera = Camera.main;
 
-    void Update()
+    public void ProcessMoving(bool isMoving, Vector3 motion)
     {
-        _input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-
-        if (_input.sqrMagnitude > 0.05f)
+        if (isMoving)
         {
-            var direction = _camera.transform.TransformDirection(_input);
-            direction.y = 0;
-            direction.Normalize();
-             
-            transform.forward = direction;
-
-            _controller.Move(direction * Time.deltaTime * _speed);
-            _animator.SetFloat("Speed", _controller.velocity.magnitude);
+            Move(motion);
         }
         else
         {
-            _animator.SetFloat("Speed", 0);
+            SetAnimationSpeed(0);
         }
     }
+
+    private void Move(Vector3 motion)
+    {
+        var direction = _camera.transform.TransformDirection(motion);
+        direction.y = 0;
+        direction.Normalize();
+
+        transform.forward = direction;
+
+        _controller.Move(direction * Time.deltaTime * _speed);
+        SetAnimationSpeed(_controller.velocity.magnitude);
+    }
+
+    private void SetAnimationSpeed(float speed) => _animator.SetFloat("Speed", speed);
 }
