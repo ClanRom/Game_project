@@ -42,7 +42,7 @@ public class AttackState : StateSM
             if (_attack.CanAttack)
                 _attack.Attack();
 
-            if (!CanAttack)
+            if (!CanAttack && !_attack.IsAttacking)
                 _machine.EnterIn<PursuitState>();
         }
 

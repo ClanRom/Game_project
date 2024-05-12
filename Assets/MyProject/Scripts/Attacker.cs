@@ -4,32 +4,38 @@ public class Attacker : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private LayerMask _layerMask;
+    [SerializeField] private WeaponSO _weaponSO;
 
-    [SerializeField] private float _cooldownAttack;
-    private float _cooldownTimer;
-    private float _range = 1f;
-    private float _damage = 25f;
+    public bool IsAttacking = false;
+
+    private float _cooldownAttack => _weaponSO.CoolDamage;
+    private float _damage => _weaponSO.Damage;
     private Collider[] _hits = new Collider[3];
 
     public bool CanAttack => _cooldownTimer <= 0;
-    public float RangeAttack => _range;
+    public float RangeAttack => _weaponSO.Range;
 
+    private float _cooldownTimer;
     void Start() => ResetAttackTimer();
 
     void Update() => _cooldownTimer -= Time.deltaTime;
 
     public void Attack()
     {
+        IsAttacking = true;
         AnimateAttack();
-        AttackOfTarget();
         ResetAttackTimer();
     }
+
+    public void AttackEvent() => AttackOfTarget();
+
+    public void EndAttacking() => IsAttacking = false;
 
     private void ResetAttackTimer() => _cooldownTimer = _cooldownAttack;
 
     private void AttackOfTarget()
     {
-        int count = Physics.OverlapSphereNonAlloc(transform.position, _range, _hits, _layerMask);
+        int count = Physics.OverlapSphereNonAlloc(transform.position, RangeAttack, _hits, _layerMask);
 
         for (int i = 0; i < count; i++)
         {
@@ -49,6 +55,6 @@ public class Attacker : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _range);
+        Gizmos.DrawWireSphere(transform.position, RangeAttack);
     }
 }

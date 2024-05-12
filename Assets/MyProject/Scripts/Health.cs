@@ -1,20 +1,33 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    public event Action<Health> OnDamaged;
+
     [SerializeField] private Animator _animator;
-    private float _health;
-    private float _maxHealth = 100f;
+    [SerializeField] private ParticleSystem _particleSystem;
+    public float MaxHealth { get; private set; }
+    public float CurrentHealth { get; private set; }
 
-    public bool IsDead => _health <= 0;
+    public bool IsDead => CurrentHealth <= 0;
+    public void SetHealth(float maxhealth)
+    {
+        MaxHealth = maxhealth;
+        CurrentHealth = maxhealth;
+    }
 
-    private void Start() => _health = _maxHealth;
+    private void Awake() => _particleSystem.Stop();
+
 
     public void TakeDamage(float damage)
     {
-        _health -= damage;
+        CurrentHealth -= damage;
+        _particleSystem.Play();
+        _animator.SetTrigger("Hited");
+        OnDamaged?.Invoke(this);
 
         if(IsDead)
         {

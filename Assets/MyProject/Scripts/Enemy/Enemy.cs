@@ -10,14 +10,18 @@ public class Enemy : MonoBehaviour
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private Attacker _attack;
     [SerializeField] private Health _health;
+    [SerializeField] private EnemySO _enemySO;
 
 
     private StateMachine _stateMachine;
     private Transform _target;
-    private float _visionRadius = 10f;
+    private float _visionRadius => _enemySO.VisionRadius;
+    private float _maxHealth => _enemySO.MaxHealth;
+    private float _speed => _enemySO.Speed;
 
     private void Awake()
     {
+        _health.SetHealth(_maxHealth);
         _target = GameObject.FindGameObjectWithTag("Player").transform;
 
 
@@ -25,7 +29,7 @@ public class Enemy : MonoBehaviour
 
         _stateMachine.AddState(new RestState(_stateMachine, _animator));
         _stateMachine.AddState(new PatrollingState(_stateMachine, _animator, _agent));
-        _stateMachine.AddState(new PursuitState(_stateMachine, _animator, _attack, _agent, _target));
+        _stateMachine.AddState(new PursuitState(_stateMachine, _animator, _attack, _agent, _target, _speed));
         _stateMachine.AddState(new AttackState(_stateMachine, _animator, _attack, _agent, _target, _health));
 
 

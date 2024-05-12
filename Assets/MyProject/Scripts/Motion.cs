@@ -4,17 +4,16 @@ public class Motion : MonoBehaviour
 {
     [SerializeField] private CharacterController _controller;
     [SerializeField] private Animator _animator;
-    [SerializeField] private float _speed;
 
     private Camera _camera;
 
     private void Start() => _camera = Camera.main;
 
-    public void ProcessMoving(bool isMoving, Vector3 motion)
+    public void ProcessMoving(bool isMoving, Vector3 motion, float speed)
     {
         if (isMoving)
         {
-            Move(motion);
+            Move(motion, speed);
         }
         else
         {
@@ -22,7 +21,7 @@ public class Motion : MonoBehaviour
         }
     }
 
-    private void Move(Vector3 motion)
+    private void Move(Vector3 motion, float speed)
     {
         var direction = _camera.transform.TransformDirection(motion);
         direction.y = 0;
@@ -30,7 +29,7 @@ public class Motion : MonoBehaviour
 
         transform.forward = direction;
 
-        _controller.Move(direction * Time.deltaTime * _speed);
+        _controller.Move(direction * Time.deltaTime * speed);
         SetAnimationSpeed(_controller.velocity.magnitude);
     }
 

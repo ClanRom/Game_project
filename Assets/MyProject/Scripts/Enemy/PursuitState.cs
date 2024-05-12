@@ -8,17 +8,18 @@ public class PursuitState : StateSM
     private Transform _target;
     private Attacker _attack;
     private float _speed;
-    private float _maxSpeed = 3f;
+    private float _maxSpeed;
 
     private float _distanceToTarget = 15f;
     private bool ZoneToTarget => Vector3.Distance(_target.position, _agent.nextPosition) < _distanceToTarget;
     private float _time = 0;
     private float _timerToTarget = 1;
-    public PursuitState(StateMachine machine, Animator animator, Attacker attack, NavMeshAgent agent, Transform target) : base(machine, animator)
+    public PursuitState(StateMachine machine, Animator animator, Attacker attack, NavMeshAgent agent, Transform target, float speed) : base(machine, animator)
     {
         _agent = agent;
         _attack = attack;
         _target = target;
+        _maxSpeed = speed;
     }
 
     public override void Enter()
